@@ -85,9 +85,9 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostDto deletePost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
-        PostDto postDto = modelMapper.map(post, PostDto.class);
+        commentRepository.deleteAll(post.getComments());
         postRepository.delete(post);
-        return postDto;
+        return modelMapper.map(post, PostDto.class);
     }
 
     @Override
