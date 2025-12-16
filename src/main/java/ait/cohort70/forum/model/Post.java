@@ -42,7 +42,7 @@ public class Post {
     private Set<Tag> tags = new HashSet<>();
     @Column(name = "likes")
     private int likes;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String content, String author) {
