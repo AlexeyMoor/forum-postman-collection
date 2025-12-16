@@ -6,7 +6,6 @@ import ait.cohort70.accounting.dto.UserRolesDto;
 import ait.cohort70.accounting.dto.UserUpdateDto;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface UserAccountService {
     UserDto register(UserRegisterDto userRegisterDto);
 
