@@ -6,13 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Stream;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Stream<Post> findByAuthor(String author);
+    Stream<Post> findByAuthorIgnoreCase(String author);
 
-    @Query("SELECT p FROM Post p JOIN p.tags t WHERE t.name = :tags")
-    Stream<Post> findByTags(@Param("tags") Iterable<String> tags);
+    Stream<Post> findDistinctByTagsNameInIgnoreCase(List<String> tags);
 
-    Stream<Post> findByDateCreatedBetween(LocalDate from, LocalDate to);
+    Stream<Post> findByDateCreatedBetween(LocalDateTime from, LocalDateTime to);
 }

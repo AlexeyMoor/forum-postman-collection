@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -102,7 +104,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public Iterable<PostDto> findPostsByAuthor(String author) {
-        return postRepository.findByAuthor(author)
+        return postRepository.findByAuthorIgnoreCase(author)
                 .map(p -> modelMapper.map(p, PostDto.class))
                 .toList();
     }
@@ -110,14 +112,17 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public Iterable<PostDto> findPostsByTags(List<String> tags) {
-        return postRepository.findByTags(tags)
+        return postRepository.findDistinctByTagsNameInIgnoreCase(tags)
                 .map(p -> modelMapper.map(p, PostDto.class))
                 .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Iterable<PostDto> findPostsByPeriod(LocalDate dateFrom, LocalDate dateTo) {
-        return postRepository.findByDateCreatedBetween(dateFrom, dateTo)
+        LocalDateTime from = dateFrom.atStartOfDay();
+        LocalDateTime to = dateTo.atTime(LocalTime.MAX);
+        return postRepository.findByDateCreatedBetween(from, to)
                 .map(p -> modelMapper.map(p, PostDto.class))
                 .toList();
     }
