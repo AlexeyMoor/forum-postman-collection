@@ -96,7 +96,6 @@ public class PostServiceImpl implements PostService {
         Comment comment = new Comment(author, newCommentDto.getMessage());
         comment.setPost(post);
         commentRepository.save(comment);
-        post.addComment(comment);
         return modelMapper.map(post, PostDto.class);
     }
 
