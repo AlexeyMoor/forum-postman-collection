@@ -1,9 +1,6 @@
 package ait.cohort70.accounting.controller;
 
-import ait.cohort70.accounting.dto.UserDto;
-import ait.cohort70.accounting.dto.UserRegisterDto;
-import ait.cohort70.accounting.dto.UserRolesDto;
-import ait.cohort70.accounting.dto.UserUpdateDto;
+import ait.cohort70.accounting.dto.*;
 import ait.cohort70.accounting.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,7 +53,7 @@ public class UserAccountController {
 
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
-        userAccountService.changePassword(principal.getName(), newPassword);
+    public void changePassword(Principal principal, @RequestBody PasswordChangeDto passwordChangeDto) {
+        userAccountService.changePassword(principal.getName(), passwordChangeDto.getPassword());
     }
 }
