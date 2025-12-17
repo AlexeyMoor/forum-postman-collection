@@ -6,54 +6,52 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/account")
+@RequiredArgsConstructor
 public class UserAccountController {
-
     private final UserAccountService userAccountService;
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
     public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
         return userAccountService.register(userRegisterDto);
     }
 
     @PostMapping("/login")
-    public UserDto login(Principal principal) {
-        return userAccountService.login(principal.getName());
+    public UserDto login() {
+        // TODO get username from header
+        return userAccountService.getUser("login");
+    }
+
+    @DeleteMapping("/user/{login}")
+    public UserDto removeUser(@PathVariable String login) {
+        return userAccountService.removeUser(login);
+    }
+
+    @PatchMapping("/user/{login}")
+    public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
+        return userAccountService.updateUser(login, userEditDto);
+    }
+
+    @PatchMapping("/user/{login}/role/{role}")
+    public RolesDto addRole(@PathVariable String login, @PathVariable String role) {
+        return userAccountService.changeRolesList(login, role, true);
+    }
+
+    @DeleteMapping("/user/{login}/role/{role}")
+    public RolesDto deleteRole(@PathVariable String login, @PathVariable String role) {
+        return userAccountService.changeRolesList(login, role, false);
+    }
+
+    @PatchMapping("/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(@RequestBody NewPasswordDto newPasswordDto) {
+        // TODO get username from header
+        userAccountService.changePassword("username", newPasswordDto.getPassword());
     }
 
     @GetMapping("/user/{login}")
     public UserDto getUser(@PathVariable String login) {
         return userAccountService.getUser(login);
-    }
-
-    @DeleteMapping("/user/{login}")
-    public UserDto deleteUser(@PathVariable String login) {
-        return userAccountService.deleteUser(login);
-    }
-
-    @PatchMapping("/user/{login}")
-    public UserDto updateUser(@PathVariable String login, @RequestBody UserUpdateDto userUpdateDto) {
-        return userAccountService.updateUser(login, userUpdateDto);
-    }
-
-    @PatchMapping("/user/{login}/role/{role}")
-    public UserRolesDto addRole(@PathVariable String login, @PathVariable String role) {
-        return userAccountService.addRole(login, role);
-    }
-
-    @DeleteMapping("/user/{login}/role/{role}")
-    public UserRolesDto removeRole(@PathVariable String login, @PathVariable String role) {
-        return userAccountService.removeRole(login, role);
-    }
-
-    @PatchMapping("/password")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(Principal principal, @RequestBody PasswordChangeDto passwordChangeDto) {
-        userAccountService.changePassword(principal.getName(), passwordChangeDto.getPassword());
     }
 }

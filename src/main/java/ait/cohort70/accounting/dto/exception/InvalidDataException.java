@@ -4,10 +4,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 @NoArgsConstructor
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String message) {
+public class InvalidDataException extends RuntimeException {
+    public InvalidDataException(String message) {
         super(message);
     }
 }
