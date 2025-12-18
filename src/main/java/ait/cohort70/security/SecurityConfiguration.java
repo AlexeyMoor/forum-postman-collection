@@ -64,18 +64,18 @@ public class SecurityConfiguration {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration  = new CorsConfiguration();
-        configuration .setAllowedOriginPatterns(List.of(
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
                 "http://127.0.0.1:*"
         ));
-        configuration .setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS" ));
-        configuration .setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept" ));
-        configuration .setAllowCredentials(true);
-        configuration .setMaxAge(3600L);
+        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS" ));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept" ));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration );
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
