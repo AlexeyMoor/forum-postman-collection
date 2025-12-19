@@ -32,26 +32,26 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/account/register", "/forum/posts/**" )
+                .requestMatchers("/account/register", "/forum/posts/**", "/error")
                 .permitAll()
 
                 // ACCOUNT
-                .requestMatchers("/account/user/{login}/role/{role}" )
+                .requestMatchers("/account/user/{login}/role/{role}")
                 .hasRole(Role.ADMINISTRATOR.name())
-                .requestMatchers(HttpMethod.PATCH, "/account/user/{login}", "/forum/post/{id}/comment/{login}" )
-                .access(new WebExpressionAuthorizationManager("#login==authentication.name" ))
-                .requestMatchers(HttpMethod.DELETE, "/account/user/{login}" )
-                .access(new WebExpressionAuthorizationManager("#login==authentication.name or hasRole('ADMINISTRATOR')" ))
+                .requestMatchers(HttpMethod.PATCH, "/account/user/{login}", "/forum/post/{id}/comment/{login}")
+                .access(new WebExpressionAuthorizationManager("#login==authentication.name"))
+                .requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
+                .access(new WebExpressionAuthorizationManager("#login==authentication.name or hasRole('ADMINISTRATOR')"))
 
                 // FORUM
-                .requestMatchers(HttpMethod.POST, "/forum/post/{author}" )
-                .access(new WebExpressionAuthorizationManager("#author==authentication.name" ))
-                .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}" )
+                .requestMatchers(HttpMethod.POST, "/forum/post/{author}")
+                .access(new WebExpressionAuthorizationManager("#author==authentication.name"))
+                .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
                 .access((authentication, context) ->
-                        new AuthorizationDecision(webSecurity.isPostOwner(authentication.get().getName(), context.getVariables().get("id" ))))
-                .requestMatchers(HttpMethod.DELETE, "/forum/post/{id}" )
+                        new AuthorizationDecision(webSecurity.isPostOwner(authentication.get().getName(), context.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.DELETE, "/forum/post/{id}")
                 .access((authentication, context) -> {
-                    boolean isAuthor = webSecurity.isPostOwner(authentication.get().getName(), context.getVariables().get("id" ));
+                    boolean isAuthor = webSecurity.isPostOwner(authentication.get().getName(), context.getVariables().get("id"));
                     boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
                     return new AuthorizationDecision(isAuthor || isModerator);
                 })
@@ -69,11 +69,10 @@ public class SecurityConfiguration {
                 "http://localhost:*",
                 "http://127.0.0.1:*"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS" ));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept" ));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
