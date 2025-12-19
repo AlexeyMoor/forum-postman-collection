@@ -2,6 +2,7 @@ package ait.cohort70.accounting.controller;
 
 import ait.cohort70.accounting.dto.*;
 import ait.cohort70.accounting.service.UserAccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,13 @@ public class UserAccountController {
     private final UserAccountService userAccountService;
 
     @PostMapping("/register")
-    public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
+    public UserDto register(@RequestBody @Valid UserRegisterDto userRegisterDto) {
         return userAccountService.register(userRegisterDto);
     }
 
     @PostMapping("/login")
-    public UserDto login(Principal principal) { // Principal содержит информацию о текущем аутентифицированном пользователе
-        return userAccountService.getUser(principal.getName());
+    public UserDto login(Principal principal) {
+        return userAccountService.getUser(principal.getName()) ;
     }
 
     @DeleteMapping("/user/{login}")
@@ -30,7 +31,7 @@ public class UserAccountController {
     }
 
     @PatchMapping("/user/{login}")
-    public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
+    public UserDto updateUser(@PathVariable String login, @RequestBody @Valid UserEditDto userEditDto) {
         return userAccountService.updateUser(login, userEditDto);
     }
 
@@ -46,7 +47,7 @@ public class UserAccountController {
 
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(Principal principal, @RequestBody NewPasswordDto newPasswordDto) {
+    public void changePassword(Principal principal, @RequestBody @Valid NewPasswordDto newPasswordDto) {
         userAccountService.changePassword(principal.getName(), newPasswordDto.getPassword());
     }
 
