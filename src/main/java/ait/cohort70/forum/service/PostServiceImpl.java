@@ -10,7 +10,9 @@ import ait.cohort70.forum.dto.exception.PostNotFoundException;
 import ait.cohort70.forum.model.Comment;
 import ait.cohort70.forum.model.Post;
 import ait.cohort70.forum.model.Tag;
+import ait.cohort70.forum.service.logging.PostLogger;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +54,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    @PostLogger
     public void addLike(Long id) {
         Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
         post.addLike();
@@ -59,6 +62,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    @PostLogger
     public PostDto updatePost(Long id, NewPostDto newPostDto) {
         Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
         String content = newPostDto.getContent();
