@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05-cascade-delete-posts
+      author: alexmoor
+
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        and:
+          - tableExists:
+              tableName: posts
+          - tableExists:
+              tableName: comments
+          - tableExists:
+              tableName: posts_tags
+
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: comments
+            constraintName: fk_comments_posts
+
+        - addForeignKeyConstraint:
+            baseTableName: comments
+            baseColumnNames: post_id
+            referencedTableName: posts
+            referencedColumnNames: id
+            constraintName: fk_comments_posts
+            onDelete: CASCADE
+
+        - dropForeignKeyConstraint:
+            baseTableName: posts_tags
+            constraintName: fk_posts_tags_posts
+
+        - addForeignKeyConstraint:
+            baseTableName: posts_tags
+            baseColumnNames: post_id
+            referencedTableName: posts
+            referencedColumnNames: id
+            constraintName: fk_posts_tags_posts
+            onDelete: CASCADE

@@ -1,10 +1,7 @@
 package ait.cohort70.forum.model;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = "id")
+@ToString(exclude = {"tags", "comments"})
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -22,17 +20,22 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
+
     @Setter
     @Column(name = "title")
     private String title;
+
     @Setter
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
+
     @Setter
     @Column(name = "author")
     private String author;
+
     @Column(name = "date_created")
     private LocalDateTime dateCreated = LocalDateTime.now();
+
     @ManyToMany
     @JoinTable(
             name = "posts_tags",
@@ -42,7 +45,8 @@ public class Post {
     private Set<Tag> tags = new HashSet<>();
     @Column(name = "likes")
     private int likes;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) // HW
+
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String content, String author) {
