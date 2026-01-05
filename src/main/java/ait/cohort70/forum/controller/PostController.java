@@ -1,13 +1,16 @@
 package ait.cohort70.forum.controller;
 
+import ait.cohort70.forum.dto.FileResponseDto;
 import ait.cohort70.forum.dto.NewCommentDto;
 import ait.cohort70.forum.dto.NewPostDto;
 import ait.cohort70.forum.dto.PostDto;
+import ait.cohort70.forum.service.FileService;
 import ait.cohort70.forum.service.PostService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +22,7 @@ import java.util.List;
 @RequestMapping("/forum")
 public class PostController {
     private final PostService postService;
+    private final FileService fileService;
 
     @PostMapping("/post/{author}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -78,5 +82,10 @@ public class PostController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addFileToPost(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         postService.addFileToPost(id, file);
+    }
+
+    @GetMapping("/post/{postId}/file")
+    public ResponseEntity<List<FileResponseDto>> getPostFiles(@PathVariable Long postId) {
+        return ResponseEntity.ok(fileService.getPostFiles(postId));
     }
 }

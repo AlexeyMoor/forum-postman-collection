@@ -16,16 +16,20 @@ public class AttachedFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
+
     @Setter
     @Column(name = "file_name")
     private String fileName;
+
     @Setter
     @Column(name = "content_type")
     private String contentType;
+
     @Column(name = "file_data")
     @Lob
     @Setter
     private byte[] content;
+
     @ManyToOne
     @JoinColumn(name = "post_id")
     @Setter

@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 01-file-in-post
       author: alexmoor
+      validCheckSum: ANY
       changes:
         - createTable:
             tableName: files
@@ -35,6 +36,7 @@ databaseChangeLog:
   - changeSet:
       id: 02-add-fk-constraint
       author: alexmoor
+      validCheckSum: ANY
       changes:
         - addForeignKeyConstraint:
             baseTableName: files
