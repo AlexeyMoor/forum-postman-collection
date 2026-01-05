@@ -22,7 +22,7 @@ public class UserAccountController {
 
     @PostMapping("/login")
     public UserDto login(Principal principal) {
-        return userAccountService.getUser(principal.getName()) ;
+        return userAccountService.getUser(principal.getName());
     }
 
     @DeleteMapping("/user/{login}")
@@ -54,5 +54,11 @@ public class UserAccountController {
     @GetMapping("/user/{login}")
     public UserDto getUser(@PathVariable String login) {
         return userAccountService.getUser(login);
+    }
+
+    @PostMapping("/email")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void sendEmail(@RequestBody @Valid EmailDto emailDto) {
+        userAccountService.sendEmail(emailDto);
     }
 }
