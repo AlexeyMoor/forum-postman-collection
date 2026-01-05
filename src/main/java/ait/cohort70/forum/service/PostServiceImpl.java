@@ -1,12 +1,14 @@
 package ait.cohort70.forum.service;
 
 import ait.cohort70.forum.dao.CommentRepository;
+import ait.cohort70.forum.dao.FileRepository;
 import ait.cohort70.forum.dao.PostRepository;
 import ait.cohort70.forum.dao.TagRepository;
 import ait.cohort70.forum.dto.NewCommentDto;
 import ait.cohort70.forum.dto.NewPostDto;
 import ait.cohort70.forum.dto.PostDto;
 import ait.cohort70.forum.dto.exception.PostNotFoundException;
+import ait.cohort70.forum.model.AttachedFile;
 import ait.cohort70.forum.model.Comment;
 import ait.cohort70.forum.model.Post;
 import ait.cohort70.forum.model.Tag;
@@ -16,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,6 +33,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
+    private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -101,6 +106,19 @@ public class PostServiceImpl implements PostService {
         comment.setPost(post);
         commentRepository.save(comment);
         return modelMapper.map(post, PostDto.class);
+    }
+
+    @Override
+    @Transactional
+    public void addFileToPost(Long id, MultipartFile file) {
+        Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
+        try {
+            AttachedFile attachedFile = new AttachedFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
+            attachedFile.setPost(post);
+            fileRepository.save(attachedFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

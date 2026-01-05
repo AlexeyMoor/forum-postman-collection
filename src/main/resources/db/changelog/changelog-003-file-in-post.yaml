@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-file-in-post
+      author: alexmoor
+      changes:
+        - createTable:
+            tableName: files
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: file_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content_type
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_data
+                  type: BLOB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: post_id
+                  type: BIGINT
+
+  - changeSet:
+      id: 02-add-fk-constraint
+      author: alexmoor
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: files
+            baseColumnNames: post_id
+            referencedTableName: posts
+            referencedColumnNames: id
+            constraintName: fk_file_post
+            onDelete: CASCADE

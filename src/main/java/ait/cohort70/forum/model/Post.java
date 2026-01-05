@@ -48,6 +48,8 @@ public class Post {
 
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private List<AttachedFile> files = new ArrayList<>();
 
     public Post(String title, String content, String author) {
         this.title = title;

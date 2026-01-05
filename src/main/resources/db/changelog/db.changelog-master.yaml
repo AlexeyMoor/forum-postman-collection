@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changelog-001-init-tables.yaml
   - include:
       file: db/changelog/changelog-002-cascade-delete-posts.yaml
+  - include:
+      file: db/changelog/changelog-003-file-in-post.yaml
