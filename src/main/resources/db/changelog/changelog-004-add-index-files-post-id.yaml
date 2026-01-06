@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-add-index-files-post-id
+      author: alexmoor
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - indexExists:
+                indexName: idx_files_post_id
+      changes:
+        - createIndex:
+            indexName: idx_files_post_id
+            tableName: files
+            columns:
+              - column:
+                  name: post_id
