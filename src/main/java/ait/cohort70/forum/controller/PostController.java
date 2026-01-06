@@ -49,7 +49,10 @@ public class PostController {
     }
 
     @PatchMapping("/post/{id}/comment/{author}")
-    public PostDto addComment(@PathVariable Long id, @PathVariable String author, @RequestBody @Valid NewCommentDto newCommentDto) {
+    public PostDto addComment(
+            @PathVariable Long id,
+            @PathVariable String author,
+            @RequestBody @Valid NewCommentDto newCommentDto) {
         return postService.addComment(id, author, newCommentDto);
     }
 
@@ -64,7 +67,11 @@ public class PostController {
     }
 
     @GetMapping("/posts/period")
-    public Iterable<PostDto> findPostsByPeriod(@RequestParam("dateFrom") @NotNull(message = "Date from cannot be null") LocalDate from, @RequestParam("dateTo") @NotNull(message = "Date to cannot be null") LocalDate to) {
+    public Iterable<PostDto> findPostsByPeriod(
+            @RequestParam("dateFrom")
+            @NotNull(message = "Date from cannot be null") LocalDate from,
+            @RequestParam("dateTo")
+            @NotNull(message = "Date to cannot be null") LocalDate to) {
         return postService.findPostsByPeriod(from, to);
     }
 
