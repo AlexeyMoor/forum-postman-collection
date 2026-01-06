@@ -4,6 +4,7 @@ import ait.cohort70.forum.dao.CommentRepository;
 import ait.cohort70.forum.dao.FileRepository;
 import ait.cohort70.forum.dao.PostRepository;
 import ait.cohort70.forum.dao.TagRepository;
+import ait.cohort70.forum.dto.FileDto;
 import ait.cohort70.forum.dto.NewCommentDto;
 import ait.cohort70.forum.dto.NewPostDto;
 import ait.cohort70.forum.dto.PostDto;
@@ -14,7 +15,6 @@ import ait.cohort70.forum.model.Post;
 import ait.cohort70.forum.model.Tag;
 import ait.cohort70.forum.service.logging.PostLogger;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,15 +40,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostDto addNewPost(String author, NewPostDto newPostDto) {
         Post post = new Post(newPostDto.getTitle(), newPostDto.getContent(), author);
-        Set<String> tags = newPostDto.getTags();
-        if (tags != null) {
-            for (String tagName : tags) {
-                Tag tag = tagRepository.findById(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName)));
-                post.addTag(tag);
-            }
-        }
-        post = postRepository.save(post);
-        return modelMapper.map(post, PostDto.class);
+        // Handle tags
+        return getPostDto(newPostDto, post);
     }
 
     @Override
@@ -71,23 +64,14 @@ public class PostServiceImpl implements PostService {
     public PostDto updatePost(Long id, NewPostDto newPostDto) {
         Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
         String content = newPostDto.getContent();
-        if (content != null && !content.isBlank()) {
+        if (content != null) {
             post.setContent(content);
         }
         String title = newPostDto.getTitle();
-        if (title != null && !title.isBlank()) {
+        if (title != null) {
             post.setTitle(title);
         }
-        Set<String> tags = newPostDto.getTags();
-        if (tags != null) {
-            post.getTags().clear();
-            for (String tagName : tags) {
-                Tag tag = tagRepository.findById(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName)));
-                post.addTag(tag);
-                tag.getPosts().add(post);
-            }
-        }
-        return modelMapper.map(post, PostDto.class);
+        return getPostDto(newPostDto, post);
     }
 
     @Override
@@ -117,8 +101,17 @@ public class PostServiceImpl implements PostService {
             attachedFile.setPost(post);
             fileRepository.save(attachedFile);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to store file", e);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<FileDto> getFilesByPostId(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
+        return post.getFiles().stream()
+                .map(f -> modelMapper.map(f, FileDto.class))
+                .toList();
     }
 
     @Override
@@ -145,5 +138,18 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByDateCreatedBetween(from, to)
                 .map(p -> modelMapper.map(p, PostDto.class))
                 .toList();
+    }
+
+    private PostDto getPostDto(NewPostDto newPostDto, Post post) {
+        Set<String> tags = newPostDto.getTags();
+        if (tags != null) {
+            for (String tagName : tags) {
+                Tag tag = tagRepository.findById(tagName)
+                        .orElseGet(() -> tagRepository.save(new Tag(tagName)));
+                post.addTag(tag);
+            }
+        }
+        post = postRepository.save(post);
+        return modelMapper.map(post, PostDto.class);
     }
 }

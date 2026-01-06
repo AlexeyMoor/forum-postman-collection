@@ -5,5 +5,3 @@ databaseChangeLog:
       file: db/changelog/changelog-002-cascade-delete-posts.yaml
   - include:
       file: db/changelog/changelog-003-file-in-post.yaml
-  - include:
-      file: db/changelog/changelog-004-add-index-files-post-id.yaml
