@@ -77,7 +77,7 @@ public class PostController {
 
     @PatchMapping("/post/{id}/file")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addFileToPost(@PathVariable Long id, @RequestParam("file")  MultipartFile file){
+    public void addFileToPost(@PathVariable Long id, @RequestParam("file") MultipartFile file){
         postService.addFileToPost(id, file);
     }
 
